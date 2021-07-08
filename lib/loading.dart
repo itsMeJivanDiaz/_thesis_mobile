@@ -58,19 +58,27 @@ class _LoadingState extends State<Loading> {
 
   bool loadingstatus = true;
 
-  @override
-  void initState() {
-    super.initState();
-    initializegeneraldata();
+  void error() {
     Future.delayed(
       Duration(seconds: 30),
       () {
         setState(() {
-          loadingmessage = 'Server Error or Internet Error.';
+          loadingmessage = 'Server / Network Error.';
           loadingstatus = false;
         });
       },
     );
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    initializegeneraldata();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
   }
 
   @override
@@ -88,7 +96,7 @@ class _LoadingState extends State<Loading> {
           children: <Widget>[
             Container(
               alignment: Alignment.center,
-              height: MediaQuery.of(context).size.height,
+              height: MediaQuery.of(context).size.height * 0.9,
               width: MediaQuery.of(context).size.width,
               child: SingleChildScrollView(
                 child: Container(
