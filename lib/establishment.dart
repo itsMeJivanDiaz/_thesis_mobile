@@ -82,7 +82,7 @@ class _EstablishmentInfoState extends State<EstablishmentInfo> {
       SystemUiOverlayStyle(
         statusBarColor: Colors.transparent,
         statusBarIconBrightness: Brightness.dark,
-        systemNavigationBarColor: Colors.transparent,
+        systemNavigationBarColor: Colors.white,
         systemNavigationBarIconBrightness: Brightness.dark,
       ),
     );
@@ -376,8 +376,6 @@ class _EstablishmentInfoState extends State<EstablishmentInfo> {
               ),
             ],
           ),
-          floatingActionButtonLocation:
-              FloatingActionButtonLocation.centerFloat,
           floatingActionButton: FloatingActionButton(
             backgroundColor: Color(0xffFF6E00),
             elevation: 2,
