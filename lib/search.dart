@@ -14,12 +14,12 @@ class SearchEstablishment {
   });
   Future<void> getsearch() async {
     if (search == "") {
-      Response response =
-          await get('http://192.168.254.131/cimo/web/general_api.php?all');
+      Response response = await get(
+          'http://192.168.254.131/cimo_desktop/app/general_api.php?all');
       data = jsonDecode(response.body);
     } else if (search != "") {
       Response response = await get(
-          'http://192.168.254.131/cimo/web/general_api.php?search=$search&&city=$city');
+          'http://192.168.254.131/cimo_desktop/app/general_api.php?search=$search&&city=$city');
       data = jsonDecode(response.body);
     }
   }

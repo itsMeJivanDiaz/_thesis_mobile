@@ -6,7 +6,7 @@ class FetchGeneralData {
   List data = [];
   Future<void> getData() async {
     Response response =
-        await get('http://192.168.254.131/cimo/web/general_api.php?all');
+        await get('http://192.168.254.131/cimo_desktop/app/general_api.php?all');
     data = jsonDecode(response.body);
   }
 }

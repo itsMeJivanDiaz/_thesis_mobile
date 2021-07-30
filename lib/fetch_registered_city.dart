@@ -6,7 +6,7 @@ class FetchRegisteredCity {
   List data = [];
   Future<void> getData() async {
     Response response =
-        await get('http://192.168.254.131/cimo/web/fetch_cities.php?cities');
+        await get('http://192.168.254.131/cimo_desktop/app/fetch_cities.php?cities');
     data = jsonDecode(response.body);
   }
 }

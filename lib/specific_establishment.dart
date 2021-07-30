@@ -10,7 +10,7 @@ class SpecificEstablishment {
   SpecificEstablishment({required this.ref_id});
   Future<void> getSpec() async {
     Response response = await get(
-        'http://192.168.254.131/cimo/web/general_api.php?eid=$ref_id');
+        'http://192.168.254.131/cimo_desktop/app/general_api.php?eid=$ref_id');
     data = jsonDecode(response.body);
   }
 }
