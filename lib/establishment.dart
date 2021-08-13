@@ -24,7 +24,7 @@ class _EstablishmentInfoState extends State<EstablishmentInfo> {
   late GoogleMapController _mapController;
   Set<Marker> _markers = HashSet<Marker>();
   Future _mapfuture = Future.delayed(
-    Duration(seconds: 3),
+    Duration(seconds: 5),
     () => true,
   );
   void getSpecific(String id) async {
@@ -98,9 +98,10 @@ class _EstablishmentInfoState extends State<EstablishmentInfo> {
             height: MediaQuery.of(context).size.height,
             width: MediaQuery.of(context).size.width,
             child: Container(
-              child: SpinKitPouringHourglass(
+              child: SpinKitRing(
                 color: Color(0xffFCD4D0),
                 size: 35,
+                lineWidth: 5,
               ),
             ),
           ),
@@ -115,20 +116,30 @@ class _EstablishmentInfoState extends State<EstablishmentInfo> {
             elevation: 3,
             brightness: Brightness.light,
             actions: [
-              Container(
-                margin: EdgeInsets.only(
-                  right: 15,
-                ),
-                height: 35,
-                width: 35,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(50),
-                  color: Color(0xffddddd),
-                ),
-                child: Image(
-                  image: specdata[0]['logo'] == "None"
-                      ? AssetImage('assets/images/logo.png')
-                      : AssetImage('assets/images/${specdata[0]['logo']},'),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Container(
+                  margin: EdgeInsets.only(
+                    right: 10,
+                  ),
+                  height: 35,
+                  width: 40,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(50),
+                    color: Colors.blue,
+                  ),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(50),
+                    child: specdata[0]['logo'] == "None"
+                        ? Image(
+                            image: AssetImage('assets/images/logo.png'),
+                          )
+                        : Image(
+                            image: NetworkImage(
+                                'http://192.168.254.109:80/cimo_desktop/uploads/${specdata[0]['logo']}'),
+                            fit: BoxFit.cover,
+                          ),
+                  ),
                 ),
               ),
             ],
@@ -146,9 +157,10 @@ class _EstablishmentInfoState extends State<EstablishmentInfo> {
                     future: _mapfuture,
                     builder: (context, snapshot) {
                       if (!snapshot.hasData) {
-                        return SpinKitDualRing(
+                        return SpinKitRipple(
                           color: Color(0xffFCD4D0),
-                          size: 25,
+                          size: 40,
+                          borderWidth: 10,
                         );
                       }
                       return GoogleMap(

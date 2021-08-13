@@ -15,7 +15,7 @@ class _LoadingState extends State<Loading> {
   void initializegeneraldata() async {
     FetchGeneralData initialData = FetchGeneralData();
     setState(() {
-      loadingmessage = 'Checking your Internet.';
+      loadingmessage = 'Checking your Internet';
     });
     await initialData.getData();
     List initData = initialData.data;
@@ -24,7 +24,7 @@ class _LoadingState extends State<Loading> {
       Duration(seconds: 3),
       () {
         setState(() {
-          loadingmessage = 'Getting Registered Establishments..';
+          loadingmessage = 'Getting Registered Establishments';
         });
       },
     );
@@ -34,7 +34,7 @@ class _LoadingState extends State<Loading> {
       Duration(seconds: 3),
       () {
         setState(() {
-          loadingmessage = 'Finalizing.';
+          loadingmessage = 'Finalizing';
         });
       },
     );
@@ -63,7 +63,7 @@ class _LoadingState extends State<Loading> {
       Duration(seconds: 30),
       () {
         setState(() {
-          loadingmessage = 'Server / Network Error.';
+          loadingmessage = 'Server / Network Error';
           loadingstatus = false;
         });
       },
@@ -132,7 +132,7 @@ class _LoadingState extends State<Loading> {
                         style: TextStyle(
                           fontFamily: 'Montserrat-R',
                           fontSize: 15,
-                          color: Color(0xffcccccc),
+                          color: Color(0xff616161),
                         ),
                       ),
                       SizedBox(

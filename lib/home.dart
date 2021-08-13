@@ -144,7 +144,7 @@ class _HomeViewState extends State<HomeView> {
                                 color: _indexvalue == index.toString()
                                     ? Color(0xffFF6E00)
                                     : Color(0xffdddddd),
-                                size: 15,
+                                size: 17,
                               ),
                               SizedBox(
                                 width: 5,
@@ -153,7 +153,7 @@ class _HomeViewState extends State<HomeView> {
                                 '${widget.city[index]['city']}',
                                 style: TextStyle(
                                   fontFamily: 'Montserrat-R',
-                                  fontSize: 13,
+                                  fontSize: 14,
                                   color: Color(0xff616161),
                                 ),
                               ),
@@ -170,22 +170,23 @@ class _HomeViewState extends State<HomeView> {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
-                      Container(
-                        decoration: BoxDecoration(
-                          color: Color(0xffFF6E00),
-                          borderRadius: BorderRadius.circular(30),
-                        ),
-                        width: 60,
-                        height: 30,
-                        alignment: Alignment.center,
-                        child: IconButton(
-                          onPressed: () {
-                            Navigator.pop(context);
-                          },
-                          icon: Icon(
-                            Icons.check,
-                            size: 15,
-                            color: Colors.white,
+                      Expanded(
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: Color(0xffFF6E00),
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          height: 40,
+                          alignment: Alignment.center,
+                          child: IconButton(
+                            onPressed: () {
+                              Navigator.pop(context);
+                            },
+                            icon: Icon(
+                              Icons.check,
+                              size: 20,
+                              color: Colors.white,
+                            ),
                           ),
                         ),
                       ),
@@ -308,7 +309,7 @@ class _HomeViewState extends State<HomeView> {
                                     filled: true,
                                     fillColor: Color(0xffff5f5f5),
                                     enabledBorder: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(30),
+                                      borderRadius: BorderRadius.circular(15),
                                       borderSide: BorderSide(
                                         color: Colors.transparent,
                                       ),
@@ -322,12 +323,12 @@ class _HomeViewState extends State<HomeView> {
                                     prefixIcon: Icon(
                                       Icons.search_rounded,
                                       size: 16,
-                                      color: Color(0xff808080),
+                                      color: Color(0xffFF6E00),
                                     ),
                                     suffixIcon: Icon(
                                       Icons.location_pin,
                                       size: 16,
-                                      color: Color(0xff808080),
+                                      color: Color(0xffFF6E00),
                                     ),
                                   ),
                                 ),
@@ -354,7 +355,7 @@ class _HomeViewState extends State<HomeView> {
                         Container(
                           margin: EdgeInsets.only(top: 25),
                           height: 1,
-                          color: Color(0xffdddddd),
+                          color: Color(0xffFF6E00),
                         ),
                         Expanded(
                           child: Container(
@@ -404,14 +405,22 @@ class _HomeViewState extends State<HomeView> {
                                                         BorderRadius.circular(
                                                             50),
                                                   ),
-                                                  child: Image(
-                                                    image: widget.data[index]
+                                                  child: ClipRRect(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            50),
+                                                    child: widget.data[index]
                                                                 ['logo'] ==
                                                             "None"
-                                                        ? AssetImage(
-                                                            'assets/images/logo.png')
-                                                        : AssetImage(
-                                                            'assets/images/${widget.data[index]['logo']},'),
+                                                        ? Image(
+                                                            image: AssetImage(
+                                                                'assets/images/logo.png'),
+                                                          )
+                                                        : Image(
+                                                            image: NetworkImage(
+                                                                'http://192.168.254.109:80/cimo_desktop/uploads/${widget.data[index]['logo']}'),
+                                                            fit: BoxFit.cover,
+                                                          ),
                                                   ),
                                                 ),
                                                 SizedBox(

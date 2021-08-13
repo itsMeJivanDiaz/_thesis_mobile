@@ -5,8 +5,8 @@ import 'package:http/http.dart';
 class FetchRegisteredCity {
   List data = [];
   Future<void> getData() async {
-    Response response =
-        await get('http://192.168.254.131/cimo_desktop/app/fetch_cities.php?cities');
+    Response response = await get(
+        'http://192.168.254.109/cimo_desktop/app/fetch_cities.php?cities');
     data = jsonDecode(response.body);
   }
 }

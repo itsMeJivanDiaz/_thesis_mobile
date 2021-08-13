@@ -5,8 +5,8 @@ import 'package:http/http.dart';
 class FetchGeneralData {
   List data = [];
   Future<void> getData() async {
-    Response response =
-        await get('http://192.168.254.131/cimo_desktop/app/general_api.php?all');
+    Response response = await get(
+        'http://192.168.254.109/cimo_desktop/app/general_api.php?all');
     data = jsonDecode(response.body);
   }
 }
