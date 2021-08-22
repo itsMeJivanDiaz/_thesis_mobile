@@ -40,12 +40,14 @@ class _HomeViewState extends State<HomeView> {
     });
   }
 
-  void getSpecific(String id) async {
+  void getSpecific(String id, String tag) async {
     Navigator.push(
       context,
-      MaterialPageRoute(
-        builder: (context) => EstablishmentInfo(
+      PageRouteBuilder(
+        transitionDuration: Duration(seconds: 1),
+        pageBuilder: (context, __, _) => EstablishmentInfo(
           id: id,
+          hero_tag: tag,
         ),
       ),
     );
@@ -166,32 +168,26 @@ class _HomeViewState extends State<HomeView> {
                   SizedBox(
                     height: 30,
                   ),
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      Expanded(
-                        child: Container(
-                          decoration: BoxDecoration(
-                            color: Color(0xffFF6E00),
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          height: 40,
-                          alignment: Alignment.center,
-                          child: IconButton(
-                            onPressed: () {
-                              Navigator.pop(context);
-                            },
-                            icon: Icon(
-                              Icons.check,
-                              size: 20,
-                              color: Colors.white,
-                            ),
-                          ),
+                  Container(
+                    decoration: BoxDecoration(
+                      color: Color(0xffA9D8D5),
+                      borderRadius: BorderRadius.circular(5),
+                    ),
+                    child: SizedBox(
+                      height: 45,
+                      width: double.infinity,
+                      child: IconButton(
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                        icon: Icon(
+                          Icons.check,
+                          size: 25,
+                          color: Colors.white,
                         ),
                       ),
-                    ],
-                  )
+                    ),
+                  ),
                 ],
               ),
             );
@@ -379,6 +375,8 @@ class _HomeViewState extends State<HomeView> {
                                           getSpecific(
                                             widget.data[index]
                                                 ['establishment-ID'],
+                                            widget.data[index]
+                                                ['establishment-ID'],
                                           );
                                         },
                                         child: Container(
@@ -405,22 +403,26 @@ class _HomeViewState extends State<HomeView> {
                                                         BorderRadius.circular(
                                                             50),
                                                   ),
-                                                  child: ClipRRect(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            50),
-                                                    child: widget.data[index]
-                                                                ['logo'] ==
-                                                            "None"
-                                                        ? Image(
-                                                            image: AssetImage(
-                                                                'assets/images/logo.png'),
-                                                          )
-                                                        : Image(
-                                                            image: NetworkImage(
-                                                                'http://192.168.254.109:80/cimo_desktop/uploads/${widget.data[index]['logo']}'),
-                                                            fit: BoxFit.cover,
-                                                          ),
+                                                  child: Hero(
+                                                    tag: widget.data[index]
+                                                        ['establishment-ID'],
+                                                    child: ClipRRect(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              50),
+                                                      child: widget.data[index]
+                                                                  ['logo'] ==
+                                                              "None"
+                                                          ? Image(
+                                                              image: AssetImage(
+                                                                  'assets/images/logo.png'),
+                                                            )
+                                                          : Image(
+                                                              image: NetworkImage(
+                                                                  'http://192.168.254.109:80/cimo_desktop/uploads/${widget.data[index]['logo']}'),
+                                                              fit: BoxFit.cover,
+                                                            ),
+                                                    ),
                                                   ),
                                                 ),
                                                 SizedBox(
