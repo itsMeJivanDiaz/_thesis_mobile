@@ -419,7 +419,7 @@ class _HomeViewState extends State<HomeView> {
                                                             )
                                                           : Image(
                                                               image: NetworkImage(
-                                                                  'http://192.168.254.109:80/cimo_desktop/uploads/${widget.data[index]['logo']}'),
+                                                                  'http://192.168.254.108:80/cimo_desktop/uploads/${widget.data[index]['logo']}'),
                                                               fit: BoxFit.cover,
                                                             ),
                                                     ),
