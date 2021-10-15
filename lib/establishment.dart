@@ -6,6 +6,7 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:cimo_mobile/specific_establishment.dart';
 import 'package:flutter/services.dart';
+import 'package:cimo_mobile/ip.dart';
 
 // ignore: must_be_immutable
 class EstablishmentInfo extends StatefulWidget {
@@ -29,6 +30,9 @@ class _EstablishmentInfoState extends State<EstablishmentInfo> {
     Duration(seconds: 5),
     () => true,
   );
+
+  GetIp address = GetIp();
+
   void getSpecific(String id) async {
     //ignore: non_constant_identifier_names
     SpecificEstablishment spec_instance = SpecificEstablishment(ref_id: id);
@@ -128,7 +132,7 @@ class _EstablishmentInfoState extends State<EstablishmentInfo> {
                               )
                             : Image(
                                 image: NetworkImage(
-                                    'http://192.168.254.108:80/cimo_desktop/uploads/${specdata[0]['logo']}'),
+                                    'http://${address.getip()}:80/cimo_desktop/uploads/${specdata[0]['logo']}'),
                                 fit: BoxFit.cover,
                               ),
                   ),

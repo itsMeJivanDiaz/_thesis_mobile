@@ -6,6 +6,7 @@ import 'dart:math';
 import 'package:cimo_mobile/search.dart';
 import 'package:cimo_mobile/fetch_general.dart';
 import 'package:cimo_mobile/specific_establishment.dart';
+import 'package:cimo_mobile/ip.dart';
 
 // ignore: must_be_immutable
 class HomeView extends StatefulWidget {
@@ -24,6 +25,8 @@ class _HomeViewState extends State<HomeView> {
     Color(0xffE0F1F0),
     Color(0xffFCF6ED),
   ];
+
+  GetIp address = GetIp();
 
   Random rand = new Random();
   int coloridx = 0;
@@ -419,7 +422,7 @@ class _HomeViewState extends State<HomeView> {
                                                             )
                                                           : Image(
                                                               image: NetworkImage(
-                                                                  'http://192.168.254.108:80/cimo_desktop/uploads/${widget.data[index]['logo']}'),
+                                                                  'http://${address.getip()}:80/cimo_desktop/uploads/${widget.data[index]['logo']}'),
                                                               fit: BoxFit.cover,
                                                             ),
                                                     ),

@@ -1,6 +1,9 @@
 import 'dart:convert';
 // ignore: import_of_legacy_library_into_null_safe
 import 'package:http/http.dart';
+import 'package:cimo_mobile/ip.dart';
+
+GetIp address = GetIp();
 
 class SearchEstablishment {
   // ignore: non_constant_identifier_names
@@ -15,11 +18,11 @@ class SearchEstablishment {
   Future<void> getsearch() async {
     if (search == "") {
       Response response = await get(
-          'http://192.168.254.108/cimo_desktop/app/general_api.php?all');
+          'http://${address.getip()}/cimo_desktop/app/general_api.php?all');
       data = jsonDecode(response.body);
     } else if (search != "") {
       Response response = await get(
-          'http://192.168.254.108/cimo_desktop/app/general_api.php?search=$search&&city=$city');
+          'http://${address.getip()}/cimo_desktop/app/general_api.php?search=$search&&city=$city');
       data = jsonDecode(response.body);
     }
   }

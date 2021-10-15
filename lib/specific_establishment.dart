@@ -1,6 +1,9 @@
 import 'dart:convert';
 // ignore: import_of_legacy_library_into_null_safe
 import 'package:http/http.dart';
+import 'package:cimo_mobile/ip.dart';
+
+GetIp address = GetIp();
 
 class SpecificEstablishment {
   // ignore: non_constant_identifier_names
@@ -10,7 +13,7 @@ class SpecificEstablishment {
   SpecificEstablishment({required this.ref_id});
   Future<void> getSpec() async {
     Response response = await get(
-        'http://192.168.254.108/cimo_desktop/app/general_api.php?eid=$ref_id');
+        'http://${address.getip()}/cimo_desktop/app/general_api.php?eid=$ref_id');
     data = jsonDecode(response.body);
   }
 }
