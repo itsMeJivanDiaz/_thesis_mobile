@@ -1,4 +1,5 @@
 import 'package:cimo_mobile/loading.dart';
+import 'package:cimo_mobile/selection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -16,7 +17,7 @@ void main() {
       debugShowCheckedModeBanner: false,
       initialRoute: '/',
       routes: {
-        '/': (context) => Loading(),
+        '/': (context) => Selection(),
       },
     ),
   );

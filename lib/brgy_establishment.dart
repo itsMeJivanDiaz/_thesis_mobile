@@ -1,4 +1,5 @@
 import 'dart:collection';
+import 'package:cimo_mobile/get_brgy_spec.dart';
 import 'package:cimo_mobile/unsupported.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -9,24 +10,23 @@ import 'package:flutter/services.dart';
 import 'package:cimo_mobile/ip.dart';
 
 // ignore: must_be_immutable
-class EstablishmentInfo extends StatefulWidget {
+class BrygEstablishmentInfo extends StatefulWidget {
   String id;
   String hero_tag;
   String? token = '';
   String? secretkey = '';
   String? devid = '';
-  EstablishmentInfo({
+  BrygEstablishmentInfo({
     required this.id,
     required this.hero_tag,
     required this.token,
     required this.secretkey,
-    required this.devid,
   });
   @override
-  _EstablishmentInfoState createState() => _EstablishmentInfoState();
+  _BrgyEstablishmentInfoState createState() => _BrgyEstablishmentInfoState();
 }
 
-class _EstablishmentInfoState extends State<EstablishmentInfo> {
+class _BrgyEstablishmentInfoState extends State<BrygEstablishmentInfo> {
   String color_status = '';
   bool isload = true;
   bool set_img = false;
@@ -42,25 +42,36 @@ class _EstablishmentInfoState extends State<EstablishmentInfo> {
 
   void getSpecific(String id) async {
     //ignore: non_constant_identifier_names
-    SpecificEstablishment spec_instance = SpecificEstablishment(
-        refid: id,
-        token: widget.token,
-        key: widget.secretkey,
-        id: widget.devid);
-    await spec_instance.getSpec();
+    BrgySpecificEstablishment brgy_spec_instance = BrgySpecificEstablishment(
+      refid: id,
+      token: widget.token,
+      key: widget.secretkey,
+    );
+    await brgy_spec_instance.getBrgySpec();
     Future.delayed(Duration(seconds: 2), () {
       setState(() {
         isload = false;
         set_img = true;
-        specdata = spec_instance.data;
+        specdata = brgy_spec_instance.data;
       });
       status(specdata[0]['status']);
     });
   }
 
-  void status(status) {
-    setState(() {
-      color_status = status;
+  void updateData(String id) async {
+    BrgySpecificEstablishment brgy_spec_instance_update =
+        BrgySpecificEstablishment(
+      refid: id,
+      token: widget.token,
+      key: widget.secretkey,
+    );
+    await brgy_spec_instance_update.getBrgySpec();
+    Future.delayed(Duration(seconds: 2), () {
+      setState(() {
+        isload = false;
+        specdata = brgy_spec_instance_update.data;
+      });
+      status(specdata[0]['status']);
     });
   }
 
@@ -79,19 +90,9 @@ class _EstablishmentInfoState extends State<EstablishmentInfo> {
     });
   }
 
-  void updateData(String id) async {
-    SpecificEstablishment specinstanceupdated = SpecificEstablishment(
-        refid: id,
-        token: widget.token,
-        key: widget.secretkey,
-        id: widget.devid);
-    await specinstanceupdated.getSpec();
-    Future.delayed(Duration(seconds: 2), () {
-      setState(() {
-        isload = false;
-        specdata = specinstanceupdated.data;
-      });
-      status(specdata[0]['status']);
+  void status(status) {
+    setState(() {
+      color_status = status;
     });
   }
 

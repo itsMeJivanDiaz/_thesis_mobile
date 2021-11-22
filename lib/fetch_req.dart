@@ -5,23 +5,20 @@ import 'package:cimo_mobile/ip.dart';
 
 GetIp address = GetIp();
 
-class SpecificEstablishment {
+class FetchRequests {
   // ignore: non_constant_identifier_names
-  String refid;
   List data = [];
   String? token = '';
   String? key = '';
-  String? id = '';
   // ignore: non_constant_identifier_names
-  SpecificEstablishment({
-    required this.refid,
+  FetchRequests({
     required this.token,
     required this.key,
-    required this.id,
   });
-  Future<void> getSpec() async {
+  Future<void> fetchrequests() async {
     Response response = await get(
-        'http://${address.getip()}/cimo_desktop/app/general_api.php?eid=$refid&&token=$token&&key=$key&&id=$id');
+        'http://${address.getip()}/cimo_desktop/app/fetch_req.php?token=$token&&key=$key');
     data = jsonDecode(response.body);
+    print(data);
   }
 }

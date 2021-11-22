@@ -1,3 +1,4 @@
+import 'package:cimo_mobile/brgy_home.dart';
 import 'package:cimo_mobile/fetch_registered_city.dart';
 import 'package:cimo_mobile/home.dart';
 import 'package:cimo_mobile/jwt_init.dart';
@@ -8,147 +9,64 @@ import 'package:flutter/services.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:cimo_mobile/fetch_general.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:cimo_mobile/fetch_brgy_est.dart';
 
-class Loading extends StatefulWidget {
+class BrgyLoading extends StatefulWidget {
+  String? token = '';
+  String? secret = '';
+  BrgyLoading({required this.token, required this.secret});
   @override
-  _LoadingState createState() => _LoadingState();
+  _BrgyLoadingState createState() => _BrgyLoadingState();
 }
 
-class _LoadingState extends State<Loading> {
+class _BrgyLoadingState extends State<BrgyLoading> {
   String status = '';
   String loadingmessage = 'Please wait';
   bool loadingstatus = true;
   bool isauthentic = false;
-  String? token = '';
-  String? devid = '';
-  String? key = '';
 
-  void check() async {
-    String? new_token = '';
-    String? new_key = '';
-    String? new_id = '';
-    String? prev_token = '';
-    String? prev_key = '';
-    String? prev_id = '';
-    Prefs sess = Prefs(value: '', key: '');
-    await sess.getter('token');
-    if (sess.res == null || sess.res == '') {
-      JWT jwt = JWT(status: 'None', key: 'None', id: 'None');
-      await jwt.getjwt();
-      await sess.getter('token');
-      new_token = sess.res;
-      await sess.getter('key');
-      new_key = sess.res;
-      await sess.getter('id');
-      new_id = sess.res;
-      JWT newjwt = JWT(status: new_token, key: new_key, id: new_id);
-      await newjwt.getjwt();
-      print(newjwt.jwt);
-      if (newjwt.jwt[0]['status'] == 'Success') {
-        setState(() {
-          isauthentic = true;
-          token = new_token;
-          key = new_key;
-          devid = new_id;
-          print(devid);
-        });
-        initializegeneraldata();
-      } else {
-        setState(() {
-          loadingmessage = newjwt.jwt[0]['status'];
-          loadingstatus = false;
-        });
-      }
-    } else {
-      await sess.getter('token');
-      prev_token = sess.res;
-      await sess.getter('key');
-      prev_key = sess.res;
-      await sess.getter('id');
-      prev_id = sess.res;
-      JWT prevtoken = JWT(status: prev_token, key: prev_key, id: prev_id);
-      await prevtoken.getjwt();
-      if (prevtoken.jwt[0]['status'] == 'Success') {
-        setState(() {
-          isauthentic = true;
-          token = prev_token;
-          key = prev_key;
-          devid = prev_id;
-          print(devid);
-        });
-        initializegeneraldata();
-      } else {
-        setState(() {
-          loadingmessage = prevtoken.jwt[0]['status'];
-          loadingstatus = false;
-        });
-      }
-    }
-  }
-
-  void initializegeneraldata() async {
-    if (isauthentic == true) {
-      FetchGeneralData initialData =
-          FetchGeneralData(token: token, key: key, id: devid);
-      Future.delayed(Duration(seconds: 2), () {
-        setState(() {
-          loadingmessage = 'Checking your Internet';
-        });
+  void fetchbarangay() async {
+    await Future.delayed(Duration(seconds: 2), () {
+      setState(() {
+        loadingmessage = 'Verifying profile';
       });
-      await initialData.getData();
-      List initData = initialData.data;
-      print(initData);
-      FetchRegisteredCity registeredCity = FetchRegisteredCity();
-      await Future.delayed(
-        Duration(seconds: 3),
-        () {
-          setState(() {
-            loadingmessage = 'Getting Registered Establishments';
-          });
-        },
+    });
+    BrygyFetch brgyfetch =
+        BrygyFetch(token: widget.token, secretkey: widget.secret);
+    await Future.delayed(Duration(seconds: 2), () {
+      setState(() {
+        loadingmessage = 'Getting Designated Establishments';
+      });
+    });
+    await brgyfetch.fetchest();
+    await Future.delayed(Duration(seconds: 2), () {
+      setState(() {
+        loadingmessage = 'Finalizing';
+      });
+    });
+    Future.delayed(Duration(seconds: 1), () {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => BrgyHome(
+            token: widget.token,
+            secretkey: widget.secret,
+            establishment: brgyfetch.status,
+          ),
+        ),
       );
-      await registeredCity.getData();
-      List initialCity = registeredCity.data;
-      print(initialCity);
-      await Future.delayed(
-        Duration(seconds: 3),
-        () {
-          setState(() {
-            loadingmessage = 'Finalizing';
-          });
-        },
-      );
-      Future.delayed(
-        Duration(seconds: 3),
-        () {
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(
-              builder: (context) => HomeView(
-                data: initData,
-                city: initialCity,
-                token: token,
-                secretkey: key,
-                id: devid,
-              ),
-            ),
-          );
-        },
-      );
-    } else {
-      print('ez');
-    }
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    check();
+    });
   }
 
   @override
   void dispose() {
     super.dispose();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    fetchbarangay();
   }
 
   @override

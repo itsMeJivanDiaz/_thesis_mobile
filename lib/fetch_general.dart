@@ -6,10 +6,14 @@ import 'package:cimo_mobile/ip.dart';
 GetIp address = GetIp();
 
 class FetchGeneralData {
+  String? token = '';
+  String? key = '';
+  String? id = '';
+  FetchGeneralData({required this.token, required this.key, required this.id});
   List data = [];
   Future<void> getData() async {
     Response response = await get(
-        'http://${address.getip()}/cimo_desktop/app/general_api.php?all');
+        'http://${address.getip()}/cimo_desktop/app/general_api.php?all&&token=$token&&key=$key&&id=$id');
     data = jsonDecode(response.body);
   }
 }

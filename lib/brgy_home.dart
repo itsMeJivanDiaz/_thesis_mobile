@@ -1,92 +1,49 @@
-import 'package:cimo_mobile/establishment.dart';
-import 'package:cimo_mobile/log_out.dart';
-import 'package:cimo_mobile/prefs.dart';
+import 'dart:async';
+
+import 'package:cimo_mobile/brgy_establishment.dart';
+import 'package:cimo_mobile/brgy_search.dart';
+import 'package:cimo_mobile/fetch_brgy_est.dart';
+import 'package:cimo_mobile/fetch_req.dart';
+import 'package:cimo_mobile/jwt_pref.dart';
 import 'package:cimo_mobile/selection.dart';
+import 'package:cimo_mobile/unsupported.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:cimo_mobile/unsupported.dart';
 import 'dart:math';
-import 'package:cimo_mobile/search.dart';
-import 'package:cimo_mobile/fetch_general.dart';
-import 'package:cimo_mobile/specific_establishment.dart';
 import 'package:cimo_mobile/ip.dart';
+import 'package:cimo_mobile/log_out.dart';
+import 'package:cimo_mobile/prefs.dart';
+import 'package:badges/badges.dart';
 
-// ignore: must_be_immutable
-class HomeView extends StatefulWidget {
-  List data = [];
-  List city = [];
+class BrgyHome extends StatefulWidget {
   String? token = '';
   String? secretkey = '';
-  String? id = '';
-  HomeView({
-    required this.data,
-    required this.city,
+  List<dynamic> establishment = [];
+  BrgyHome({
     required this.token,
     required this.secretkey,
-    required this.id,
+    required this.establishment,
   });
+
   @override
-  _HomeViewState createState() => _HomeViewState();
+  _BrgyHomeState createState() => _BrgyHomeState();
 }
 
-class _HomeViewState extends State<HomeView> {
+class _BrgyHomeState extends State<BrgyHome> {
+  Timer? timer;
+  bool isbadge = false;
+  int req_count = 0;
+  GetIp address = GetIp();
   List colors = [
     Color(0xffE0F1F0),
     Color(0xffFCF6ED),
   ];
 
-  GetIp address = GetIp();
+  String _indexvalue = '';
 
   Random rand = new Random();
   int coloridx = 0;
-  bool load = false;
-
-  final _searchcontroller = TextEditingController();
-
-  Future<void> _refresh() async {
-    // ignore: non_constant_identifier_names
-    FetchGeneralData est_instance = FetchGeneralData(
-      token: widget.token,
-      key: widget.secretkey,
-      id: widget.id,
-    );
-    await est_instance.getData();
-    setState(() {
-      widget.data = est_instance.data;
-    });
-  }
-
-  void backto() async {
-    Prefs logout_token = Prefs(value: '', key: '');
-    await logout_token.getter('token');
-    Prefs logout_key = Prefs(value: '', key: '');
-    await logout_key.getter('key');
-    LogOut lgout = LogOut(token: logout_token.res, key: logout_key.res);
-    lgout.logout();
-    Future.delayed(Duration(seconds: 1), () {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => Selection()),
-      );
-    });
-  }
-
-  void getSpecific(String id, String tag) async {
-    Navigator.push(
-      context,
-      PageRouteBuilder(
-        transitionDuration: Duration(seconds: 1),
-        pageBuilder: (context, __, _) => EstablishmentInfo(
-          id: id,
-          hero_tag: tag,
-          token: widget.token,
-          secretkey: widget.secretkey,
-          devid: widget.id,
-        ),
-      ),
-    );
-  }
-
+  String current = 'None';
   colorchange(index) {
     if (index % 2 == 0) {
       coloridx = 1;
@@ -96,153 +53,94 @@ class _HomeViewState extends State<HomeView> {
     return coloridx;
   }
 
-  String _indexvalue = '';
-
-  String current = 'None';
-
-  void _modalshow() {
-    showModalBottomSheet(
-        enableDrag: false,
-        isScrollControlled: false,
-        backgroundColor: Colors.transparent,
-        context: context,
-        builder: (context) {
-          return StatefulBuilder(builder: (context, update) {
-            return Container(
-              padding: EdgeInsets.fromLTRB(20, 30, 20, 10),
-              height: MediaQuery.of(context).size.height * 0.5,
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(20),
-                  topRight: Radius.circular(20),
-                ),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  Row(
-                    children: <Widget>[
-                      Icon(
-                        Icons.location_city_rounded,
-                        size: 20,
-                        color: Color(0xffFF6E00),
-                      ),
-                      SizedBox(
-                        width: 5,
-                      ),
-                      Text(
-                        'Cities',
-                        style: TextStyle(
-                          fontFamily: 'Montserrat-B',
-                          fontSize: 15,
-                          color: Color(0xff616161),
-                        ),
-                      ),
-                      Spacer(),
-                      Text(
-                        ' ( Current : $current )',
-                        style: TextStyle(
-                          fontFamily: 'Montserrat-R',
-                          fontSize: 13,
-                          color: Color(0xff616161),
-                        ),
-                      )
-                    ],
-                  ),
-                  SizedBox(
-                    height: 15,
-                  ),
-                  Expanded(
-                    child: ListView.builder(
-                      itemCount: widget.city.length,
-                      itemExtent: 50,
-                      itemBuilder: (context, index) => GestureDetector(
-                        onTap: () {
-                          update(() {
-                            _indexvalue = index.toString();
-                            current = widget.city[index]['city'];
-                          });
-                        },
-                        child: Container(
-                          margin: EdgeInsets.only(top: 15),
-                          decoration: BoxDecoration(
-                            border: Border(
-                              bottom: BorderSide(
-                                color: Color(0xffE1E1E1),
-                              ),
-                            ),
-                          ),
-                          child: Row(
-                            children: [
-                              Icon(
-                                Icons.location_pin,
-                                color: _indexvalue == index.toString()
-                                    ? Color(0xffFF6E00)
-                                    : Color(0xffdddddd),
-                                size: 17,
-                              ),
-                              SizedBox(
-                                width: 5,
-                              ),
-                              Text(
-                                '${widget.city[index]['city']}',
-                                style: TextStyle(
-                                  fontFamily: 'Montserrat-R',
-                                  fontSize: 14,
-                                  color: Color(0xff616161),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                  SizedBox(
-                    height: 30,
-                  ),
-                  Container(
-                    decoration: BoxDecoration(
-                      color: Color(0xffA9D8D5),
-                      borderRadius: BorderRadius.circular(5),
-                    ),
-                    child: SizedBox(
-                      height: 45,
-                      width: double.infinity,
-                      child: IconButton(
-                        onPressed: () {
-                          Navigator.pop(context);
-                        },
-                        icon: Icon(
-                          Icons.check,
-                          size: 25,
-                          color: Colors.white,
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            );
-          });
-        });
-  }
-
-  _senddatasearch(String data) async {
-    // ignore: unused_local_variable
-    SearchEstablishment searchisntance = SearchEstablishment(
-        search: data,
-        city: current,
-        token: widget.token,
-        key: widget.secretkey,
-        id: widget.id);
-    await searchisntance.getsearch();
+  _senddatasearch(String search) async {
+    BrgySearch brgsrch = BrgySearch(
+      search: search,
+      token: widget.token,
+      secretkey: widget.secretkey,
+    );
+    await brgsrch.brgysrch();
     setState(() {
-      widget.data = searchisntance.data;
+      widget.establishment = brgsrch.status;
     });
   }
 
+  void getSpecific(String id, String tag) async {
+    Navigator.push(
+      context,
+      PageRouteBuilder(
+        transitionDuration: Duration(seconds: 1),
+        pageBuilder: (context, __, _) => BrygEstablishmentInfo(
+          id: id,
+          hero_tag: tag,
+          token: widget.token,
+          secretkey: widget.secretkey,
+        ),
+      ),
+    );
+  }
+
+  void fetchreq() async {
+    FetchRequests fetch = FetchRequests(
+      token: widget.token,
+      key: widget.secretkey,
+    );
+    await fetch.fetchrequests();
+    setState(() {
+      req_count = fetch.data.length;
+      if (req_count > 0) {
+        isbadge = true;
+      } else {
+        isbadge = false;
+      }
+    });
+  }
+
+  void backto() async {
+    JwtPrefs logout_token = JwtPrefs(setvar: 'jwt_brgy', setval: '');
+    await logout_token.getjwt();
+    JwtPrefs logout_key = JwtPrefs(setvar: 'key_brgy', setval: '');
+    await logout_key.getjwt();
+    LogOut brgy_log_out = LogOut(
+      token: logout_token.res,
+      key: logout_key.res,
+    );
+    await brgy_log_out.logout();
+    Future.delayed(Duration(seconds: 1), () {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => Selection()),
+      );
+    });
+  }
+
+  final _searchcontroller = TextEditingController();
+
+  Future<void> _refresh() async {
+    BrygyFetch brgyfetch = BrygyFetch(
+      token: widget.token,
+      secretkey: widget.secretkey,
+    );
+    await brgyfetch.fetchest();
+    setState(() {
+      widget.establishment = brgyfetch.status;
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    fetchreq();
+    timer = Timer.periodic(Duration(seconds: 40), (Timer t) => fetchreq());
+  }
+
+  @override
+  void dispose() {
+    timer?.cancel();
+    super.dispose();
+  }
+
+  bool load = false;
   @override
   Widget build(BuildContext context) {
     SystemChrome.setPreferredOrientations([
@@ -301,25 +199,80 @@ class _HomeViewState extends State<HomeView> {
                     alignment: Alignment.topRight,
                     margin: EdgeInsets.only(bottom: 10),
                     padding: EdgeInsets.fromLTRB(5, 0, 5, 0),
-                    child: Tooltip(
-                      message: 'Log out',
-                      waitDuration: Duration(microseconds: 1),
-                      showDuration: Duration(seconds: 1),
-                      textStyle: TextStyle(
-                        fontFamily: 'Montserrat-R',
-                        color: Color(0xffffffff),
-                        fontSize: 13,
-                      ),
-                      child: IconButton(
-                        icon: Icon(
-                          Icons.power_settings_new_sharp,
-                          size: 20,
-                          color: Color(0xffFF6E00),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: <Widget>[
+                        Badge(
+                          showBadge: isbadge == false ? false : true,
+                          badgeColor: Color(0xffE0F1F0),
+                          badgeContent: Text(
+                            '$req_count',
+                            style: TextStyle(
+                              fontFamily: 'Montserrat-R',
+                              color: Color(0xff606060),
+                              fontSize: 12,
+                            ),
+                          ),
+                          alignment: Alignment.center,
+                          position: BadgePosition.topEnd(top: 2, end: 5),
+                          child: Tooltip(
+                            message: 'Requests',
+                            waitDuration: Duration(microseconds: 1),
+                            showDuration: Duration(seconds: 1),
+                            textStyle: TextStyle(
+                              fontFamily: 'Montserrat-R',
+                              color: Color(0xffffffff),
+                              fontSize: 13,
+                            ),
+                            child: IconButton(
+                              icon: Icon(
+                                Icons.checklist_rtl_sharp,
+                                size: 21,
+                                color: Color(0xffFF6E00),
+                              ),
+                              onPressed: () {},
+                            ),
+                          ),
                         ),
-                        onPressed: () {
-                          backto();
-                        },
-                      ),
+                        Tooltip(
+                          message: 'View Violations',
+                          waitDuration: Duration(microseconds: 1),
+                          showDuration: Duration(seconds: 1),
+                          textStyle: TextStyle(
+                            fontFamily: 'Montserrat-R',
+                            color: Color(0xffffffff),
+                            fontSize: 13,
+                          ),
+                          child: IconButton(
+                            icon: Icon(
+                              Icons.warning_amber_sharp,
+                              size: 20,
+                              color: Color(0xffFF6E00),
+                            ),
+                            onPressed: () {},
+                          ),
+                        ),
+                        Tooltip(
+                          message: 'Log out',
+                          waitDuration: Duration(microseconds: 1),
+                          showDuration: Duration(seconds: 1),
+                          textStyle: TextStyle(
+                            fontFamily: 'Montserrat-R',
+                            color: Color(0xffffffff),
+                            fontSize: 13,
+                          ),
+                          child: IconButton(
+                            icon: Icon(
+                              Icons.power_settings_new_sharp,
+                              size: 20,
+                              color: Color(0xffFF6E00),
+                            ),
+                            onPressed: () {
+                              backto();
+                            },
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ),
@@ -346,7 +299,6 @@ class _HomeViewState extends State<HomeView> {
                                 padding: EdgeInsets.only(
                                   top: 15,
                                   bottom: 15,
-                                  right: 10,
                                 ),
                                 child: TextField(
                                   controller: _searchcontroller,
@@ -359,7 +311,7 @@ class _HomeViewState extends State<HomeView> {
                                     fontSize: 13,
                                   ),
                                   decoration: InputDecoration(
-                                    hintText: 'Find Place',
+                                    hintText: 'Find Establishment',
                                     hintStyle: TextStyle(
                                       fontFamily: 'Montserrat-R',
                                       color: Color(0xff616161),
@@ -396,22 +348,6 @@ class _HomeViewState extends State<HomeView> {
                                 ),
                               ),
                             ),
-                            Container(
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(15),
-                                color: Color(0xffFF6E00),
-                              ),
-                              child: IconButton(
-                                onPressed: () {
-                                  _modalshow();
-                                },
-                                icon: Icon(
-                                  Icons.tune_rounded,
-                                  size: 20,
-                                  color: Colors.white,
-                                ),
-                              ),
-                            ),
                           ],
                         ),
                         Container(
@@ -425,7 +361,7 @@ class _HomeViewState extends State<HomeView> {
                               onRefresh: _refresh,
                               child: ListView.builder(
                                 controller: controller,
-                                itemCount: widget.data.length,
+                                itemCount: widget.establishment.length,
                                 itemExtent: 120,
                                 itemBuilder: (context, index) {
                                   return Padding(
@@ -439,11 +375,10 @@ class _HomeViewState extends State<HomeView> {
                                         splashColor: Color(0xffA9D8D5),
                                         onTap: () {
                                           getSpecific(
-                                            widget.data[index]
-                                                ['establishment-ID'],
-                                            widget.data[index]
-                                                ['establishment-ID'],
-                                          );
+                                              widget.establishment[index]
+                                                  ['establishment-ID'],
+                                              widget.establishment[index]
+                                                  ['establishment-ID']);
                                         },
                                         child: Container(
                                           decoration: BoxDecoration(
@@ -470,24 +405,29 @@ class _HomeViewState extends State<HomeView> {
                                                             50),
                                                   ),
                                                   child: Hero(
-                                                    tag: widget.data[index]
+                                                    tag: widget.establishment[
+                                                            index]
                                                         ['establishment-ID'],
                                                     child: ClipRRect(
                                                       borderRadius:
                                                           BorderRadius.circular(
                                                               50),
-                                                      child: widget.data[index]
-                                                                  ['logo'] ==
-                                                              "none"
-                                                          ? Image(
-                                                              image: AssetImage(
-                                                                  'assets/images/logo.png'),
-                                                            )
-                                                          : Image(
-                                                              image: NetworkImage(
-                                                                  'http://${address.getip()}:80/cimo_desktop/uploads/${widget.data[index]['logo']}'),
-                                                              fit: BoxFit.cover,
-                                                            ),
+                                                      child:
+                                                          widget.establishment[
+                                                                          index]
+                                                                      [
+                                                                      'logo'] ==
+                                                                  "none"
+                                                              ? Image(
+                                                                  image: AssetImage(
+                                                                      'assets/images/logo.png'),
+                                                                )
+                                                              : Image(
+                                                                  image: NetworkImage(
+                                                                      'http://${address.getip()}:80/cimo_desktop/uploads/${widget.establishment[index]['logo']}'),
+                                                                  fit: BoxFit
+                                                                      .cover,
+                                                                ),
                                                     ),
                                                   ),
                                                 ),
@@ -502,7 +442,7 @@ class _HomeViewState extends State<HomeView> {
                                                   children: [
                                                     Flexible(
                                                       child: Text(
-                                                        '${widget.data[index]['establishment-name']}',
+                                                        '${widget.establishment[index]['establishment-name']}',
                                                         style: TextStyle(
                                                           fontFamily:
                                                               'Montserrat-B',
@@ -512,7 +452,7 @@ class _HomeViewState extends State<HomeView> {
                                                     ),
                                                     Flexible(
                                                       child: Text(
-                                                        '${widget.data[index]['branch']}, ${widget.data[index]['street']}',
+                                                        '${widget.establishment[index]['branch']}, ${widget.establishment[index]['street']}',
                                                         style: TextStyle(
                                                           fontFamily:
                                                               'Montserrat-R',
@@ -522,7 +462,7 @@ class _HomeViewState extends State<HomeView> {
                                                     ),
                                                     Flexible(
                                                       child: Text(
-                                                        '${widget.data[index]['barangay']}',
+                                                        '${widget.establishment[index]['barangay']}',
                                                         style: TextStyle(
                                                           fontFamily:
                                                               'Montserrat-R',
@@ -532,7 +472,7 @@ class _HomeViewState extends State<HomeView> {
                                                     ),
                                                     Flexible(
                                                       child: Text(
-                                                        '${widget.data[index]['city']}, Philippines',
+                                                        '${widget.establishment[index]['city']}, Philippines',
                                                         style: TextStyle(
                                                           fontFamily:
                                                               'Montserrat-R',
@@ -563,9 +503,7 @@ class _HomeViewState extends State<HomeView> {
           ),
         );
       } else {
-        return Scaffold(
-          body: Text('hello'),
-        );
+        return Scaffold();
       }
     }
   }
