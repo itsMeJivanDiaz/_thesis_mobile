@@ -45,7 +45,7 @@ class _BrgyLoadingState extends State<BrgyLoading> {
       });
     });
     Future.delayed(Duration(seconds: 1), () {
-      Navigator.push(
+      Navigator.pushReplacement(
         context,
         MaterialPageRoute(
           builder: (context) => BrgyHome(

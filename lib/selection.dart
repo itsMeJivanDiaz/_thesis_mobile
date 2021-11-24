@@ -24,7 +24,7 @@ class _SelectionState extends State<Selection> {
 
   void barangaylogin() {
     Future.delayed(Duration(seconds: 1), () {
-      Navigator.push(
+      Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (context) => MobileLogin()),
       );

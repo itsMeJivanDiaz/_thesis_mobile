@@ -31,6 +31,7 @@ dependencies:
   network_to_file_image: ^3.0.0
   shared_preferences: ^2.0.8
   badges: ^2.0.1
+  carousel_slider: ^4.0.0
 
 
 
